@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yaml
+    kompose.version: 1.28.0 (c4137012e)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: mqtt-source
+  name: mqtt-source
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: mqtt-source
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose.yaml
+        kompose.version: 1.28.0 (c4137012e)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/tes-default: "true"
+        io.kompose.service: mqtt-source
+    spec:
+      containers:
+        - env:
+            - name: KAFKA_BOOSTRAP_SERVERS
+              value: kafka:9092
+            - name: KAFKA_PRODUCE_TOPIC
+              value: sensor_events
+            - name: MQTT_HOST
+              value: 35.213.189.119
+            - name: MQTT_PASSWORD
+              value: mataelang
+            - name: MQTT_PORT
+              value: "1883"
+            - name: MQTT_TOPIC
+              value: mataelang/sensor/v3/+
+            - name: MQTT_USERNAME
+              value: mataelang
+          image: mataelang/kafka-mqtt-source:1.1
+          name: mqtt-source
+          resources:
+            limits:
+              cpu: 500m
+              memory: "67108864"
+            requests:
+              cpu: 250m
+              memory: "33554432"
+      restartPolicy: Always
+status: {}

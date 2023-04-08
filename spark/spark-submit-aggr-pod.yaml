@@ -1,0 +1,69 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yaml --volumes hostPath
+    kompose.version: 1.28.0 (c4137012e)
+  creationTimestamp: null
+  labels:
+    io.kompose.network/test-default: "true"
+    io.kompose.service: spark-submit-aggr
+  name: spark-submit-aggr
+spec:
+  containers:
+    - args:
+        - bash
+        - -c
+        - "/opt/spark/bin/spark-submit \\\n    --class $()$(SPARK)_APP_CLASSNAME \\\n    --name $()$(SPARK)_APP_NAME \\\n    --total-executor-cores $()$(TOTAL)_EXECUTOR_CORES \\\n    --conf spark.ui.port=$()$(SPARK)_APP_UI \\\n    --conf spark.submit.deployMode=$()$(DEPLOY)_MODE \\\n    --conf spark.driver.memory=$()$(SPARK)_DRIVER_MEMORY \\\n    --conf spark.executor.cores=$()$(SPARK)_EXECUTOR_CORES \\\n    --conf spark.executor.memory=$()$(SPARK)_EXECUTOR_MEMORY \\\n    --conf spark.eventLog.dir=$()$(SPARK)_EVENTLOG_DIR \\\n    --conf spark.sql.shuffle.partitions=$()$(SPARK)_SHUFFLE_PARTITION \\\n    --conf spark.sql.codegen.aggregate.map.twolevel.enabled=false \\\n    --conf spark.sql.streaming.metricsEnabled=true \\\n    --files conf/app.properties \\\n    $()$(SPARK)_APP_JAR_PATH\n    "
+      env:
+        - name: DEPLOY_MODE
+          value: cluster
+        - name: SPARK_APP_CLASSNAME
+          value: org.mataelang.kaspacore.jobs.SensorAggregationStreamJob
+        - name: SPARK_APP_NAME
+          value: SensorAggregationStreamJob
+        - name: SPARK_APP_UI
+          value: "4041"
+        - name: SPARK_DRIVER_MEMORY
+          value: 2g
+        - name: SPARK_EXECUTOR_CORES
+          value: "1"
+        - name: SPARK_EXECUTOR_MEMORY
+          value: 2g
+        - name: SPARK_MASTER_HOST
+          value: spark-master
+        - name: SPARK_MASTER_PORT
+          value: "7077"
+        - name: SPARK_NO_DAEMONIZE
+          value: "true"
+        - name: SPARK_SCALA_VERSION
+          value: "2.13"
+        - name: SPARK_SHUFFLE_PARTITION
+          value: "1"
+        - name: TOTAL_EXECUTOR_CORES
+          value: "1"
+      image: mataelang/spark:3.3.1-scala2.13
+      name: spark-submit-aggr
+      ports:
+        - containerPort: 7778
+      resources: {}
+      volumeMounts:
+        - mountPath: /opt/spark/conf/app.properties
+          name: spark-submit-aggr-hostpath0
+        - mountPath: /opt/spark/conf/spark-defaults.conf
+          name: spark-submit-aggr-hostpath1
+        - mountPath: /opt/spark/conf/log4j2.properties
+          name: spark-submit-aggr-hostpath2
+      workingDir: /opt/spark
+  restartPolicy: Never
+  volumes:
+    - hostPath:
+        path: /home/xtrray/spark/test/conf/app.properties
+      name: spark-submit-aggr-hostpath0
+    - hostPath:
+        path: /home/xtrray/spark/test/conf/spark-defaults.conf
+      name: spark-submit-aggr-hostpath1
+    - hostPath:
+        path: /home/xtrray/spark/test/conf/log4j2.properties
+      name: spark-submit-aggr-hostpath2
+status: {}
