@@ -1,29 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    kompose.cmd: kompose convert -f docker-compose.yaml --volumes hostPath
-    kompose.version: 1.28.0 (c4137012e)
-  creationTimestamp: null
   labels:
-    io.kompose.service: spark-worker
+    app: spark-worker
   name: spark-worker
 spec:
   replicas: 2
   selector:
     matchLabels:
-      io.kompose.service: spark-worker
+      app: spark-worker
   strategy:
     type: Recreate
   template:
     metadata:
-      annotations:
-        kompose.cmd: kompose convert -f docker-compose.yaml --volumes hostPath
-        kompose.version: 1.28.0 (c4137012e)
-      creationTimestamp: null
       labels:
-        io.kompose.network/test-default: "true"
-        io.kompose.service: spark-worker
+        app: spark-worker
     spec:
       containers:
         - args:
@@ -32,7 +23,7 @@ spec:
             - /opt/spark/sbin/start-worker.sh $()$(SPARK)_MASTER
           env:
             - name: SPARK_MASTER
-              value: spark://spark-master:7077
+              value: 'spark-master-service:7077'
             - name: SPARK_NO_DAEMONIZE
               value: "true"
             - name: SPARK_SCALA_VERSION
@@ -59,12 +50,11 @@ spec:
       restartPolicy: Always
       volumes:
         - hostPath:
-            path: /home/xtrray/spark/test/conf/app.properties
+            path: /home/skripsi/spark/app.properties
           name: spark-worker-hostpath0
         - hostPath:
-            path: /home/xtrray/spark/test/conf/spark-defaults.conf
+            path: /home/skripsi/spark/spark-defaults.conf
           name: spark-worker-hostpath1
         - hostPath:
-            path: /home/xtrray/spark/test/conf/log4j2.properties
+            path: /home/skripsi/spark/log4j2.properties
           name: spark-worker-hostpath2
-status: {}

@@ -1,20 +1,19 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  annotations:
-    kompose.cmd: kompose convert -f docker-compose.yaml --volumes hostPath
-    kompose.version: 1.28.0 (c4137012e)
-  creationTimestamp: null
   labels:
-    io.kompose.network/test-default: "true"
-    io.kompose.service: spark-submit-enrich
+    app: spark-submit-enrich
   name: spark-submit-enrich
 spec:
   containers:
     - args:
         - bash
         - -c
-        - "/opt/spark/bin/spark-submit \\\n    --class $()$(SPARK)_APP_CLASSNAME \\\n    --name $()$(SPARK)_APP_NAME \\\n    --total-executor-cores $()$(TOTAL)_EXECUTOR_CORES \\\n    --conf spark.ui.port=$()$(SPARK)_APP_UI \\\n    --conf spark.submit.deployMode=$()$(DEPLOY)_MODE \\\n    --conf spark.driver.memory=$()$(SPARK)_DRIVER_MEMORY \\\n    --conf spark.executor.cores=$()$(SPARK)_EXECUTOR_CORES \\\n    --conf spark.executor.memory=$()$(SPARK)_EXECUTOR_MEMORY \\\n    --conf spark.eventLog.dir=$()$(SPARK)_EVENTLOG_DIR \\\n    --files conf/app.properties \\\n    $()$(SPARK)_APP_JAR_PATH\n    "
+        - "/opt/spark/bin/spark-submit --class $()$(SPARK)_APP_CLASSNAME --name $()$(SPARK)_APP_NAME 
+           --total-executor-cores $()$(TOTAL)_EXECUTOR_CORES --conf spark.ui.port=$()$(SPARK)_APP_UI 
+           --conf spark.submit.deployMode=$()$(DEPLOY)_MODE --conf spark.driver.memory=$()$(SPARK)_DRIVER_MEMORY
+           --conf spark.executor.cores=$()$(SPARK)_EXECUTOR_CORES --conf spark.executor.memory=$()$(SPARK)_EXECUTOR_MEMORY
+           --conf spark.eventLog.dir=$()$(SPARK)_EVENTLOG_DIR --files conf/app.properties$()$(SPARK)_APP_JAR_PATH"
       env:
         - name: DEPLOY_MODE
           value: cluster
@@ -31,7 +30,7 @@ spec:
         - name: SPARK_EXECUTOR_MEMORY
           value: 1g
         - name: SPARK_MASTER_HOST
-          value: spark-master
+          value: 'spark-master-service'
         - name: SPARK_MASTER_PORT
           value: "7077"
         - name: SPARK_NO_DAEMONIZE
@@ -56,12 +55,11 @@ spec:
   restartPolicy: Never
   volumes:
     - hostPath:
-        path: /home/xtrray/spark/test/conf/app.properties
+        path: /home/skripsi/spark/app.properties
       name: spark-submit-enrich-hostpath0
     - hostPath:
-        path: /home/xtrray/spark/test/conf/spark-defaults.conf
+        path: /home/skripsi/spark/spark-defaults.conf
       name: spark-submit-enrich-hostpath1
     - hostPath:
-        path: /home/xtrray/spark/test/conf/log4j2.properties
+        path: /home/skripsi/spark/log4j2.properties
       name: spark-submit-enrich-hostpath2
-status: {}

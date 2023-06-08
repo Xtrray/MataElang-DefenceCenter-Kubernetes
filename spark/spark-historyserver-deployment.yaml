@@ -1,29 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    kompose.cmd: kompose convert -f docker-compose.yaml --volumes hostPath
-    kompose.version: 1.28.0 (c4137012e)
-  creationTimestamp: null
   labels:
-    io.kompose.service: spark-historyserver
+    app: spark-historyserver
   name: spark-historyserver
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: spark-historyserver
+      app: spark-historyserver
   strategy:
     type: Recreate
   template:
     metadata:
-      annotations:
-        kompose.cmd: kompose convert -f docker-compose.yaml --volumes hostPath
-        kompose.version: 1.28.0 (c4137012e)
-      creationTimestamp: null
       labels:
-        io.kompose.network/test-default: "true"
-        io.kompose.service: spark-historyserver
+        app: spark-historyserver
     spec:
       containers:
         - args:
@@ -58,12 +49,12 @@ spec:
       restartPolicy: Always
       volumes:
         - hostPath:
-            path: /home/xtrray/spark/test/conf/app.properties
+            path: /home/skripsi/spark/app.properties
           name: spark-historyserver-hostpath0
         - hostPath:
-            path: /home/xtrray/spark/test/conf/spark-defaults.conf
+            path: /home/skripsi/spark/spark-defaults.conf
           name: spark-historyserver-hostpath1
         - hostPath:
-            path: /home/xtrray/spark/test/conf/log4j2.properties
+            path: /home/skripsi/spark/log4j2.properties
           name: spark-historyserver-hostpath2
 status: {}

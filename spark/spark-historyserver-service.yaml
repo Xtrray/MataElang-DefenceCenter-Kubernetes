@@ -1,19 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    kompose.cmd: kompose convert -f docker-compose.yaml --volumes hostPath
-    kompose.version: 1.28.0 (c4137012e)
-  creationTimestamp: null
   labels:
-    io.kompose.service: spark-historyserver
-  name: spark-historyserver
+    app: spark-historyserver
+  name: spark-historyserver-service
 spec:
   ports:
     - name: "18080"
       port: 18080
       targetPort: 18080
   selector:
-    io.kompose.service: spark-historyserver
+    app: spark-historyserver
 status:
   loadBalancer: {}

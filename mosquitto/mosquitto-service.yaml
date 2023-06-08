@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mosquitto-service
+  labels:
+    app: mosquitto
+spec:
+  ports:
+  - port: 1883
+    targetPort: 1883
+  selector:
+    app: mosquitto
+    tier: frontend
+    type: LoadBalancer

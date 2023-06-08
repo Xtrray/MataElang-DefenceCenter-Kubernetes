@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zookeeper-deployment
+  labels:
+    app: zookeeper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zookeeper
+  template:
+    metadata:
+      labels:
+        app: zookeeper
+    spec:
+      containers:
+      - env:
+          - name: ZOOKEEPER_CLIENT_PORT
+            value: "2181"
+          - name: ZOOKEEPER_TICK_TIME
+            value: "2000"
+        image: confluentinc/cp-zookeeper:7.3.0
+        ports:
+        - containerPort: 2181
+        name: zookeeper
+        resources:
+          limits:
+            cpu: 500m
+            memory: "536870912"
+          requests:
+            cpu: 250m
+            memory: "268435456"
+        volumeMounts:
+          - mountPath: /var/lib/zookeeper/data
+            name: zookeeper-data
+          - mountPath: /var/lib/zookeeper/log
+            name: zookeeper-log
+      restartPolicy: Always
+      volumes:
+        - name: zookeeper-data
+          persistentVolumeClaim:
+            claimName: zookeeper-data
+        - name: zookeeper-log
+          persistentVolumeClaim:
+            claimName: zookeeper-log
