@@ -1,0 +1,55 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: spark
+  name: spark-config
+data:
+  app.properties: |-
+    SPARK_MASTER='spark-master-service:7077'
+    SPARK_CHECKPOINT_PATH=hdfs://172.17.0.1:9000/user/ubuntu/kafka-checkpoint
+    TIMEZONE=UTC
+    KAFKA_BOOTSTRAP_SERVERS='kafka-service:9093'
+    KAFKA_INPUT_STARTING_OFFSETS=earliest
+    SENSOR_STREAM_INPUT_TOPIC=sensor_events
+    SENSOR_STREAM_OUTPUT_TOPIC=sensor_events_with_geoip
+    MAXMIND_DB_PATH=hdfs://172.17.0.1:9000/user/ubuntu/kaspacore/files/GeoLite2-City.mmdb
+    MAXMIND_DB_FILENAME=GeoLite2-City.mmdb
+    #LOG_LEVEL=DEBUG
+  log4j2.properties: |-
+    log4j.rootLogger=ERROR, console
+    # set the log level for these components
+    log4j.logger.com.test=DEBUG
+    log4j.logger.org=ERROR
+    log4j.logger.org.apache.spark=ERROR
+    log4j.logger.org.spark-project=ERROR
+    log4j.logger.org.apache.hadoop=ERROR
+    log4j.logger.io.netty=ERROR
+    log4j.logger.org.apache.zookeeper=ERROR
+    # add a ConsoleAppender to the logger stdout to write to the console
+    log4j.appender.console=org.apache.log4j.ConsoleAppender
+    log4j.appender.console.layout=org.apache.log4j.PatternLayout
+    # use a simple message format
+    log4j.appender.console.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n
+  spark-defaults.conf: |-
+    # Worker
+    spark.worker.cleanup.enabled=true
+    spark.worker.cleanup.interval=1800
+    spark.worker.cleanup.appDataTtl=14400
+    # History Server
+    spark.history.ui.port=18080
+    spark.history.retainedApplications=10
+    spark.history.fs.update.interval=10s
+    spark.history.fs.cleaner.maxNum=5
+    spark.history.fs.cleaner.enabled=true
+    spark.history.fs.cleaner.interval=1h
+    spark.history.fs.cleaner.maxAge=3d
+    spark.history.fs.eventLog.rolling.maxFilesToRetain=25
+    # App Configuration
+    spark.master='spark-master-service:7077'
+    spark.eventLog.enabled=true
+    spark.eventLog.rolling.enabled=true
+    spark.eventLog.rolling.maxFileSize=128m
+    spark.eventLog.compress=true
+    # Hadoop
+    spark.hadoop.dfs.replication=1

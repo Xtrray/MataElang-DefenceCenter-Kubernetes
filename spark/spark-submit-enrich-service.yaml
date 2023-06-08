@@ -2,7 +2,8 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: spark-submit-enrich
+    app: spark
+    part: spark-submit-enrich
   name: spark-submit-enrich-service
 spec:
   ports:
@@ -10,6 +11,6 @@ spec:
       port: 7777
       targetPort: 7777
   selector:
-    app: spark-submit-enrich
+    part: spark-submit-enrich
 status:
   loadBalancer: {}

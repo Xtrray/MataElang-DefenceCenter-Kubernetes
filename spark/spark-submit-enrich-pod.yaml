@@ -2,7 +2,8 @@ apiVersion: v1
 kind: Pod
 metadata:
   labels:
-    app: spark-submit-enrich
+    app: spark
+    part: spark-submit-enrich
   name: spark-submit-enrich
 spec:
   containers:
@@ -45,21 +46,18 @@ spec:
         - containerPort: 7777
       resources: {}
       volumeMounts:
-        - mountPath: /opt/spark/conf/app.properties
-          name: spark-submit-enrich-hostpath0
-        - mountPath: /opt/spark/conf/spark-defaults.conf
-          name: spark-submit-enrich-hostpath1
-        - mountPath: /opt/spark/conf/log4j2.properties
-          name: spark-submit-enrich-hostpath2
+        - name: spark-config
+          mountPath: /opt/spark/conf/
+          subPath: conf
+        - name: spark-env
+          mountPath: /opt/spark/.env
+          subPath: .env
       workingDir: /opt/spark
   restartPolicy: Never
   volumes:
-    - hostPath:
-        path: /home/skripsi/spark/app.properties
-      name: spark-submit-enrich-hostpath0
-    - hostPath:
-        path: /home/skripsi/spark/spark-defaults.conf
-      name: spark-submit-enrich-hostpath1
-    - hostPath:
-        path: /home/skripsi/spark/log4j2.properties
-      name: spark-submit-enrich-hostpath2
+    - name: spark-config
+      configMap:
+        name: spark-config
+    - name: spark-env
+      configMap:
+        name: spark-env

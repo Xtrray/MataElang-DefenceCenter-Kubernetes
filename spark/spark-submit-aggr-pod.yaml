@@ -2,7 +2,8 @@ apiVersion: v1
 kind: Pod
 metadata:
   labels:
-    app: spark-submit-aggr
+    app: spark
+    part: spark-submit-aggr
   name: spark-submit-aggr
 spec:
   containers:
@@ -49,22 +50,18 @@ spec:
         - containerPort: 7778
       resources: {}
       volumeMounts:
-        - mountPath: /opt/spark/conf/app.properties
-          name: spark-submit-aggr-hostpath0
-        - mountPath: /opt/spark/conf/spark-defaults.conf
-          name: spark-submit-aggr-hostpath1
-        - mountPath: /opt/spark/conf/log4j2.properties
-          name: spark-submit-aggr-hostpath2
+        - name: spark-config
+          mountPath: /opt/spark/conf/
+          subPath: conf
+        - name: spark-env
+          mountPath: /opt/spark/.env
+          subPath: .env
       workingDir: /opt/spark
   restartPolicy: Never
   volumes:
-    - hostPath:
-        path: /home/skripsi/spark/app.properties
-      name: spark-submit-aggr-hostpath0
-    - hostPath:
-        path: /home/skripsi/spark/spark-defaults.conf
-      name: spark-submit-aggr-hostpath1
-    - hostPath:
-        path: /home/skripsi/spark/log4j2.properties
-      name: spark-submit-aggr-hostpath2
-status: {}
+    - name: spark-config
+      configMap:
+        name: spark-config
+    - name: spark-env
+      configMap:
+        name: spark-env

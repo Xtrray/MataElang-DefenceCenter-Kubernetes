@@ -2,19 +2,20 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: spark-historyserver
+    app: spark
+    part: spark-historyserver
   name: spark-historyserver
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: spark-historyserver
+      part: spark-historyserver
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: spark-historyserver
+        part: spark-historyserver
     spec:
       containers:
         - args:
@@ -35,26 +36,22 @@ spec:
           resources:
             limits:
               cpu: "1"
-              memory: "1073741824"
+              memory: "1Gi"
             requests:
               cpu: "1"
-              memory: "1073741824"
+              memory: "1Gi"
           volumeMounts:
-            - mountPath: /opt/spark/conf/app.properties
-              name: spark-historyserver-hostpath0
-            - mountPath: /opt/spark/conf/spark-defaults.conf
-              name: spark-historyserver-hostpath1
-            - mountPath: /opt/spark/conf/log4j2.properties
-              name: spark-historyserver-hostpath2
+            - name: spark-config
+              mountPath: /opt/spark/conf/
+              subPath: conf
+            - name: spark-env
+              mountPath: /opt/spark/.env
+              subPath: .env
       restartPolicy: Always
       volumes:
-        - hostPath:
-            path: /home/skripsi/spark/app.properties
-          name: spark-historyserver-hostpath0
-        - hostPath:
-            path: /home/skripsi/spark/spark-defaults.conf
-          name: spark-historyserver-hostpath1
-        - hostPath:
-            path: /home/skripsi/spark/log4j2.properties
-          name: spark-historyserver-hostpath2
-status: {}
+        - name: spark-config
+          configMap:
+            name: spark-config
+        - name: spark-env
+          configMap:
+            name: spark-env

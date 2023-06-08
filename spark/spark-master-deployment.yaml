@@ -2,19 +2,20 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: spark-master
+    app: spark
+    part: spark-master
   name: spark-master
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: spark-master
+      part: spark-master
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: spark-master
+        part: spark-master
     spec:
       containers:
         - args:
@@ -42,25 +43,22 @@ spec:
           resources:
             limits:
               cpu: "1"
-              memory: "1073741824"
+              memory: "1Gi"
             requests:
               cpu: "1"
-              memory: "1073741824"
+              memory: "1Gi"
           volumeMounts:
-            - mountPath: /opt/spark/conf/app.properties
-              name: spark-master-hostpath0
-            - mountPath: /opt/spark/conf/spark-defaults.conf
-              name: spark-master-hostpath1
-            - mountPath: /opt/spark/conf/log4j2.properties
-              name: spark-master-hostpath2
+            - name: spark-config
+              mountPath: /opt/spark/conf/
+              subPath: conf
+            - name: spark-env
+              mountPath: /opt/spark/.env
+              subPath: .env
       restartPolicy: Always
       volumes:
-        - hostPath:
-            path: /home/skripsi/spark/app.properties
-          name: spark-master-hostpath0
-        - hostPath:
-            path: /home/skripsi/spark/spark-defaults.conf
-          name: spark-master-hostpath1
-        - hostPath:
-            path: /home/xtrray/spark/skripsilog4j2.properties
-          name: spark-master-hostpath2
+        - name: spark-config
+          configMap:
+            name: spark-config
+        - name: spark-env
+          configMap:
+            name: spark-env

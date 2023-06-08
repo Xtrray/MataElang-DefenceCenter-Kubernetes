@@ -2,19 +2,20 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: spark-worker
+    app: spark
+    part: spark-worker
   name: spark-worker
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: spark-worker
+      part: spark-worker
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: spark-worker
+        part: spark-worker
     spec:
       containers:
         - args:
@@ -41,20 +42,17 @@ spec:
             - containerPort: 4040
           resources: {}
           volumeMounts:
-            - mountPath: /opt/spark/conf/app.properties
-              name: spark-worker-hostpath0
-            - mountPath: /opt/spark/conf/spark-defaults.conf
-              name: spark-worker-hostpath1
-            - mountPath: /opt/spark/conf/log4j2.properties
-              name: spark-worker-hostpath2
+            - name: spark-config
+              mountPath: /opt/spark/conf/
+              subPath: conf
+            - name: spark-env
+              mountPath: /opt/spark/.env
+              subPath: .env
       restartPolicy: Always
       volumes:
-        - hostPath:
-            path: /home/skripsi/spark/app.properties
-          name: spark-worker-hostpath0
-        - hostPath:
-            path: /home/skripsi/spark/spark-defaults.conf
-          name: spark-worker-hostpath1
-        - hostPath:
-            path: /home/skripsi/spark/log4j2.properties
-          name: spark-worker-hostpath2
+        - name: spark-config
+          configMap:
+            name: spark-config
+        - name: spark-env
+          configMap:
+            name: spark-env
