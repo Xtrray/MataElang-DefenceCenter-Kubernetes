@@ -8,6 +8,9 @@ spec:
   ports:
   - port: 50070
     name: web
+  - name: "9000"
+    port: 9000
+    targetPort: 9000
   clusterIP: None
   selector:
      app: namenode

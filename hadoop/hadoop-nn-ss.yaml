@@ -18,6 +18,8 @@ spec:
       containers:
         - name: namenode
           image: flokkr/hadoop-hdfs-namenode:latest
+          ports:
+            - containerPort: 9000
           env:
             - name: ENSURE_NAMENODE_DIR
               value: /data/namenode

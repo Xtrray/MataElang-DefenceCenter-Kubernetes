@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: nn-pvc
+  name: opensearch-data
   labels:
-    app: namenode
+    app: opensearch-node
 spec:
   accessModes:
-    - ReadWriteOnce
+  - ReadWriteOnce
   resources:
     requests:
-      storage: 25Gi
+      storage: 20Gi

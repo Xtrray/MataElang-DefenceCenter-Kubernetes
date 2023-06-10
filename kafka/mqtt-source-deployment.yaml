@@ -2,17 +2,17 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: kafka
-  name: mqtt-source-deployment
+    app: connector
+  name: mqtt-kafka-connector
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: kafka
+      app: connector
   template:
     metadata:
       labels:
-        app: kafka
+        app: connector
     spec:
       containers:
         - env:

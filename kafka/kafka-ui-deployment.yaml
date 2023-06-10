@@ -2,18 +2,18 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: control-center
-  name: control-center-deployment
+    app: kafka-ui
+  name: kafka-ui
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: control-center
+      app: kafka-ui
   strategy: {}
   template:
     metadata:
       labels:
-        app: control-center
+        app: kafka-ui
     spec:
       containers:
         - env:

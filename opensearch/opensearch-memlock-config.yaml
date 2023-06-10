@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: memlock-config
+data:
+  override.conf: |-
+    [Service]
+    LimitMEMLOCK=infinity

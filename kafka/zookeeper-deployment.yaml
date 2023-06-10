@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: zookeeper-deployment
+  name: zookeeper
   labels:
     app: zookeeper
 spec:
@@ -21,6 +21,9 @@ spec:
           - name: ZOOKEEPER_TICK_TIME
             value: "2000"
         image: confluentinc/cp-zookeeper:7.3.0
+        securityContext:
+          runAsUser: 0
+          runAsGroup: 0
         ports:
         - containerPort: 2181
         name: zookeeper
