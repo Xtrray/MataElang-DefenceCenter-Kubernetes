@@ -2,6 +2,5 @@ resources:
 - mosquitto-config.yaml
 - mosquitto-password.yaml
 - mosquitto-pvc.yaml
-- mosquitto-pv.yaml
-- mosquitto-deployment.yaml
+- mosquitto-ss.yaml
 - mosquitto-service.yaml

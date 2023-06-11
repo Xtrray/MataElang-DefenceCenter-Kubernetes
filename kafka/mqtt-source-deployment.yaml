@@ -21,7 +21,7 @@ spec:
             - name: KAFKA_PRODUCE_TOPIC
               value: sensor_events
             - name: MQTT_HOST
-              value: 'mosquitto-service'
+              value: 10.12.3.51
             - name: MQTT_PASSWORD
               value: mataelang
             - name: MQTT_PORT

@@ -5,6 +5,7 @@ metadata:
   labels:
     app: mosquitto
 spec:
+  clusterIP: None
   ports:
   - name: "1883"
     port: 1883

@@ -15,4 +15,4 @@ data:
     connection_messages true
     log_dest stdout
     persistent_client_expiration 1h
-    password_file /mosquitto/config/password_file.txt
+    password_file /mosquitto/config/password_file
