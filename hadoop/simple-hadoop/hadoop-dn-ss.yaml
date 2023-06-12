@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: datanode
+  labels:
+    app: datanode
+spec:
+  serviceName: datanode
+  replicas: 1
+  selector:
+    matchLabels:
+      app: datanode
+  template:
+    metadata:
+      labels:
+        app: datanode
+    spec:
+      containers:
+        - name: datanode
+          image: quay.io/ferdyf78/hdfs-k8s:datanode
+          env:
+            - name: ENSURE_NAMENODE_DIR
+              value: /app/datanode
+          volumeMounts:
+            - name: hadoopconf
+              mountPath: "/usr/local/hadoop/etc/hadoop/"
+              readOnly: true
+      volumes:
+        - name: hadoopconf
+          configMap:
+            name: hadoopconf

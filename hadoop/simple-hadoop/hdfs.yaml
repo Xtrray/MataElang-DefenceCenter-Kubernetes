@@ -1,0 +1,114 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: namenode
+  labels:
+    app: namenode
+spec:
+  ports:
+    - port: 50070
+      name: web
+  clusterIP: None
+  selector:
+    app: namenode
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: namenode
+  labels:
+    app: namenode
+spec:
+  serviceName: namenode
+  replicas: 1
+  selector:
+    matchLabels:
+      app: namenode
+  template:
+    metadata:
+      labels:
+        app: namenode
+    spec:
+      containers:
+        - name: namenode
+          image: flokkr/hadoop-hdfs-namenode:latest
+          env:
+            - name: ENSURE_NAMENODE_DIR
+              value: /data/namenode
+          volumeMounts:
+            - name: config
+              mountPath: "/opt/hadoop/etc/hadoop"
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: hadoopconf
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: datanode
+  labels:
+    app: datanode
+spec:
+  serviceName: datanode
+  replicas: 1
+  selector:
+    matchLabels:
+      app: datanode
+  template:
+    metadata:
+      labels:
+        app: datanode
+    spec:
+      containers:
+        - name: datanode
+          image: flokkr/hadoop-hdfs-datanode:latest
+          volumeMounts:
+            - name: config
+              mountPath: "/opt/hadoop/etc/hadoop"
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: hadoopconf
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: datanode
+  labels:
+    app: datanode
+spec:
+  ports:
+    - port: 80
+      name: web
+  clusterIP: None
+  selector:
+    app: datanode
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dn-pvc
+  labels:
+    app: datanode
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nn-pvc
+  labels:
+    app: namenode
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
