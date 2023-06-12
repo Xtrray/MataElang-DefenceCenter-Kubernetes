@@ -5,5 +5,5 @@ metadata:
 data:
   core-site.xml: |-
     <configuration>
-    <property><name>fs.defaultFS</name><value>hdfs://namenode-service:9000</value></property>
+    <property><name>fs.defaultFS</name><value>hdfs://namenode:9000</value></property>
     </configuration>
