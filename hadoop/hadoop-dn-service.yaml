@@ -1,13 +1,16 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: datanode
+  name: datanode-service
   labels:
     app: datanode
 spec:
   ports:
-  - port: 80
-    name: web
+    - port: 80
+      name: web
+    - name: "9864"
+      port: 9864
+      targetPort: 9864
   clusterIP: None
   selector:
-     app: datanode
+    app: datanode

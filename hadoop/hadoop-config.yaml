@@ -5,18 +5,47 @@ metadata:
 data:
   core-site.xml: |-
     <configuration>
-    <property><name>fs.defaultFS</name><value>hdfs://namenode-0.namenode:9000</value></property>
+    <property><name>fs.defaultFS</name><value>hdfs://namenode-0.namenode-service:9000</value></property>
     </configuration>
   hdfs-site.xml: |-
+    <?xml version="1.0" encoding="UTF-8"?>
+    <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
     <configuration>
-    <property><name>dfs.namenode.rpc-address</name><value>namenode:9000</value></property>
-    <property><name>dfs.replication</name><value>1</value></property>
-    <property><name>dfs.permissions.superusergroup</name><value>admin</value></property>
-    <property><name>dfs.datanode.data.dir</name><value>/data/datanode</value></property>
-    <property><name>dfs.namenode.name.dir</name><value>/data/namenode</value></property>
-    <property><name>dfs.namenode.http-bind-host</name><value>0.0.0.0</value></property>
-    <property><name>dfs.namenode.datanode.registration.ip-hostname-check</name><value>false</value></property>
+      <property>
+        <name>dfs.namenode.rpc-address</name>
+        <value>namenode-service:9000</value>
+      </property>
+      <property>
+        <name>dfs.namenode.name.dir</name>
+        <value>/app/name</value>
+      </property>
+      <property>
+        <name>dfs.namenode.datanode.registration.ip-hostname-check</name>
+        <value>false</value>
+      </property>
+      <property>
+        <name>dfs.client.use.datanode.hostname</name>
+        <value>false</value>
+      </property>
+      <property>
+        <name>dfs.datanode.use.datanode.hostname</name>
+        <value>false</value>
+      </property>
+      <property>
+        <name>dfs.datanode.data.dir</name>
+        <value>/app/data</value>
+      </property>
+      <property>
+        <name>dfs.replication</name>
+        <value>1</value>
+      </property>
+      <property>
+        <name>dfs.namenode.rpc-bind-host</name>
+        <value>0.0.0.0</value>
+      </property>
     </configuration>
+  hadoop-env.sh: |-
+    export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
   log4j.properties: |-
     log4j.rootLogger: INFO, stdout
     log4j.appender.stdout: org.apache.log4j.ConsoleAppender
@@ -40,3 +69,5 @@ data:
     <property><name>yarn.scheduler.maximum-allocation-mb</name><value>12000</value></property>
     <property><name>yarn.nodemanager.resource.memory-mb</name><value>12000</value></property>
     </configuration>
+  workers: |-
+    datanode-service

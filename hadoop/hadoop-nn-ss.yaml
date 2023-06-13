@@ -5,7 +5,7 @@ metadata:
   labels:
     app: namenode
 spec:
-  serviceName: namenode
+  serviceName: namenode-service
   replicas: 1
   selector:
     matchLabels:
@@ -17,17 +17,25 @@ spec:
     spec:
       containers:
         - name: namenode
-          image: flokkr/hadoop-hdfs-namenode:latest
+          image: quay.io/ferdyf78/hdfs-k8s:namenode
+          #imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9000
+            - containerPort: 9870
           env:
             - name: ENSURE_NAMENODE_DIR
-              value: /data/namenode
+              value: /app/name
           volumeMounts:
-            - name: config
-              mountPath: "/opt/hadoop/etc/hadoop"
+            - name: hadoopconf
+              mountPath: "/usr/local/hadoop/etc/hadoop"
               readOnly: true
+      #            - name: nn-pvc
+      #             mountPath: "/app/name"
       volumes:
-        - name: config
+        - name: hadoopconf
           configMap:
             name: hadoopconf
+#        - name: nn-pvc
+#         persistentVolumeClaim:
+#          claimName: nn-pvc
