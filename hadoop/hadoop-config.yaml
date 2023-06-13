@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: hadoopconf
+  name: hdfs-conf
 data:
   core-site.xml: |-
     <configuration>
-    <property><name>fs.defaultFS</name><value>hdfs://namenode-0.namenode-service:9000</value></property>
+    <property><name>fs.defaultFS</name><value>hdfs://hdfs-namenode-0.hdfs-namenode-service:9000</value></property>
     </configuration>
   hdfs-site.xml: |-
     <?xml version="1.0" encoding="UTF-8"?>
@@ -13,7 +13,7 @@ data:
     <configuration>
       <property>
         <name>dfs.namenode.rpc-address</name>
-        <value>namenode-service:9000</value>
+        <value>hdfs-namenode-service:9000</value>
       </property>
       <property>
         <name>dfs.namenode.name.dir</name>
@@ -45,7 +45,7 @@ data:
       </property>
     </configuration>
   hadoop-env.sh: |-
-    export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+    export JAVA_HOME=/usr/local/openjdk-11
   log4j.properties: |-
     log4j.rootLogger: INFO, stdout
     log4j.appender.stdout: org.apache.log4j.ConsoleAppender
@@ -70,4 +70,4 @@ data:
     <property><name>yarn.nodemanager.resource.memory-mb</name><value>12000</value></property>
     </configuration>
   workers: |-
-    datanode-service
+    hdfs-datanode-service

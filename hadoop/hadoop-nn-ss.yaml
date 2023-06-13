@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: namenode
+  name: hdfs-namenode
   labels:
-    app: namenode
+    app: hdfs-namenode
 spec:
-  serviceName: namenode-service
+  serviceName: hdfs-namenode-service
   replicas: 1
   selector:
     matchLabels:
-      app: namenode
+      app: hdfs-namenode
   template:
     metadata:
       labels:
-        app: namenode
+        app: hdfs-namenode
     spec:
       containers:
-        - name: namenode
-          image: quay.io/ferdyf78/hdfs-k8s:namenode
+        - name: hdfs-namenode
+          image: quay.io/ferdyf78/hdfs-k8s:namenode-openjdk
           #imagePullPolicy: Always
           imagePullPolicy: IfNotPresent
           ports:
@@ -27,15 +27,15 @@ spec:
             - name: ENSURE_NAMENODE_DIR
               value: /app/name
           volumeMounts:
-            - name: hadoopconf
+            - name: hdfs-conf
               mountPath: "/usr/local/hadoop/etc/hadoop"
               readOnly: true
       #            - name: nn-pvc
       #             mountPath: "/app/name"
       volumes:
-        - name: hadoopconf
+        - name: hdfs-conf
           configMap:
-            name: hadoopconf
+            name: hdfs-conf
 #        - name: nn-pvc
 #         persistentVolumeClaim:
 #          claimName: nn-pvc

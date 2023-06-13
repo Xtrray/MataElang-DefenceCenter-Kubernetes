@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: dn-pvc
+  name: hdfs-dn-pvc
   labels:
-    app: datanode
+    app: hdfs-datanode
 spec:
   accessModes:
     - ReadWriteOnce

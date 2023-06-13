@@ -1,40 +1,40 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: datanode
+  name: hdfs-datanode
   labels:
-    app: datanode
+    app: hdfs-datanode
 spec:
-  serviceName: datanode-service
+  serviceName: hdfs-datanode-service
   replicas: 1
   selector:
     matchLabels:
-      app: datanode
+      app: hdfs-datanode
   template:
     metadata:
       labels:
-        app: datanode
+        app: hdfs-datanode
     spec:
       containers:
-        - name: datanode
-          image: quay.io/ferdyf78/hdfs-k8s:datanode
+        - name: hdfs-datanode
+          image: quay.io/ferdyf78/hdfs-k8s:datanode-openjdk
           #imagePullPolicy: Always
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9864
-          env:
-            - name: ENSURE_NAMENODE_DIR
-              value: /app/data
+          #env:
+          # - name: ENSURE_NAMENODE_DIR
+          #  value: /app/data
           volumeMounts:
-            - name: hadoopconf
+            - name: hdfs-conf
               mountPath: "/usr/local/hadoop/etc/hadoop/"
               readOnly: true
       #         - name: dn-pvc
       #          mountPath: "/app/data"
       volumes:
-        - name: hadoopconf
+        - name: hdfs-conf
           configMap:
-            name: hadoopconf
+            name: hdfs-conf
   #       - name: dn-pvc
   #        persistentVolumeClaim:
   #         claimName: dn-pvc
