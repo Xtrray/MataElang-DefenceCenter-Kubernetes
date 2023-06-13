@@ -1,14 +1,19 @@
-kind: Service
 apiVersion: v1
+kind: Service
 metadata:
-  name: spark-master
+  labels:
+    app: spark
+    part: spark-master
+  name: spark-master-service
 spec:
   ports:
-    - name: webui
+    - name: "8080"
       port: 8080
       targetPort: 8080
-    - name: spark
+    - name: "7077"
       port: 7077
       targetPort: 7077
   selector:
-    component: spark-master
+    part: spark-master
+status:
+  loadBalancer: {}

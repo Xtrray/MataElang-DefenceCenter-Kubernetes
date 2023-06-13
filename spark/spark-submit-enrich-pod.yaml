@@ -3,19 +3,25 @@ kind: Pod
 metadata:
   labels:
     app: spark
-    part: spark-submit-enrich
+    part: spark-submit
   name: spark-submit-enrich
 spec:
   containers:
     - args:
         - bash
         - -c
-        - "/opt/spark/bin/spark-submit --class $()$(SPARK)_APP_CLASSNAME --name $()$(SPARK)_APP_NAME 
-           --total-executor-cores $()$(TOTAL)_EXECUTOR_CORES --conf spark.ui.port=$()$(SPARK)_APP_UI 
-           --conf spark.submit.deployMode=$()$(DEPLOY)_MODE --conf spark.driver.memory=$()$(SPARK)_DRIVER_MEMORY
-           --conf spark.executor.cores=$()$(SPARK)_EXECUTOR_CORES --conf spark.executor.memory=$()$(SPARK)_EXECUTOR_MEMORY
-           --conf spark.eventLog.dir=$()$(SPARK)_EVENTLOG_DIR --files conf/app.properties$()$(SPARK)_APP_JAR_PATH"
+        - "/opt/spark/bin/spark-submit --master $SPARK_MASTER_HOST --class $SPARK_APP_CLASSNAME --name $SPARK_APP_NAME
+          --total-executor-cores $TOTAL_EXECUTOR_CORES --conf spark.ui.port=$SPARK_APP_UI
+          --conf spark.submit.deployMode=$DEPLOY_MODE --conf spark.driver.memory=$SPARK_DRIVER_MEMORY
+          --conf spark.executor.cores=$SPARK_EXECUTOR_CORES --conf spark.executor.memory=$SPARK_EXECUTOR_MEMORY
+          --conf spark.standalone.submit.waitAppCompletion=true --conf spark.history.opts=$SPARK_HISTORY_OPTS
+          --conf spark.eventLog.dir=$SPARK_EVENTLOG_DIR
+          --files /opt/spark/conf/log4j2.properties,/opt/spark/conf/app.properties $SPARK_APP_JAR_PATH"
       env:
+        - name: SPARK_DRIVER_EXTRAJAVAOPTIONS
+          value: "-Dlog4j.configuration=file:/opt/spark/conf/log4j2.properties -Dconfig.file=/opt/spark/conf/app.properties"
+        - name: SPARK_HISTORY_OPTS
+          value: "-Dspark.history.fs.logDirectory=hdfs://hdfs-namenode-0.hdfs-namenode-service:9000/app/spark/spark-events"
         - name: DEPLOY_MODE
           value: cluster
         - name: SPARK_APP_CLASSNAME
@@ -31,7 +37,7 @@ spec:
         - name: SPARK_EXECUTOR_MEMORY
           value: 1g
         - name: SPARK_MASTER_HOST
-          value: 'spark-master-service'
+          value: spark://spark-master-0.spark-master-service.default.svc.cluster.local:7077
         - name: SPARK_MASTER_PORT
           value: "7077"
         - name: SPARK_NO_DAEMONIZE
@@ -40,24 +46,25 @@ spec:
           value: "2.13"
         - name: TOTAL_EXECUTOR_CORES
           value: "1"
+        - name: SPARK_EVENTLOG_DIR
+          value: hdfs://hdfs-namenode-0.hdfs-namenode-service:9000/app/spark/spark-events
+        - name: SPARK_APP_JAR_PATH
+          value: hdfs://hdfs-namenode-0.hdfs-namenode-service:9000/app/kaspacore/files/kaspacore.jar
       image: mataelang/spark:3.3.1-scala2.13
       name: spark-submit-enrich
+      securityContext:
+        runAsUser: 0
       ports:
         - containerPort: 7777
-      resources: {}
+        - containerPort: 4040
+      #resources: {}
       volumeMounts:
         - name: spark-config
           mountPath: /opt/spark/conf/
           subPath: conf
-        - name: spark-env
-          mountPath: /opt/spark/.env
-          subPath: .env
       workingDir: /opt/spark
   restartPolicy: Never
   volumes:
     - name: spark-config
       configMap:
         name: spark-config
-    - name: spark-env
-      configMap:
-        name: spark-env

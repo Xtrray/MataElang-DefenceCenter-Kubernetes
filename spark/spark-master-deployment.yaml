@@ -1,17 +1,16 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   labels:
     app: spark
     part: spark-master
   name: spark-master
 spec:
+  serviceName: spark-master-service
   replicas: 1
   selector:
     matchLabels:
       part: spark-master
-  strategy:
-    type: Recreate
   template:
     metadata:
       labels:
@@ -25,8 +24,8 @@ spec:
           env:
             - name: SPARK_DAEMON_MEMORY
               value: 1g
-            - name: SPARK_MASTER_HOST
-              value: spark-master
+            #- name: SPARK_MASTER_HOST
+            # value: spark-master-0.spark-master-service.default.svc.cluster.local:7077
             - name: SPARK_MASTER_PORT
               value: "7077"
             - name: SPARK_MASTER_WEBUI_PORT
@@ -37,28 +36,27 @@ spec:
               value: "2.13"
           image: mataelang/spark:3.3.1-scala2.13
           name: spark-master
+          securityContext:
+            runAsUser: 0
+            privileged: true
           ports:
             - containerPort: 8080
             - containerPort: 7077
+            - containerPort: 7777
+            - containerPort: 7778
           resources:
             limits:
               cpu: "1"
               memory: "1Gi"
             requests:
-              cpu: "1"
+              cpu: "300m"
               memory: "1Gi"
           volumeMounts:
             - name: spark-config
               mountPath: /opt/spark/conf/
               subPath: conf
-            - name: spark-env
-              mountPath: /opt/spark/.env
-              subPath: .env
       restartPolicy: Always
       volumes:
         - name: spark-config
           configMap:
             name: spark-config
-        - name: spark-env
-          configMap:
-            name: spark-env

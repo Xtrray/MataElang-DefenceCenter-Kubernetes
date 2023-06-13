@@ -6,7 +6,6 @@ metadata:
     part: spark-worker
   name: spark-worker-service
 spec:
-  clusterIP: None
   ports:
     - name: "8081"
       port: 8081
@@ -14,12 +13,6 @@ spec:
     - name: "4040"
       port: 4040
       targetPort: 4040
-    - name: "7777"
-      port: 7777
-      targetPort: 7777
-    - name: "7778"
-      port: 7778
-      targetPort: 7778
   selector:
     part: spark-worker
 status:

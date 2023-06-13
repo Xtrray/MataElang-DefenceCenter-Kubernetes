@@ -1,44 +1,38 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   labels:
     app: spark
-    part: spark-master
-  name: spark-master
+    part: spark-historyserver
+  name: spark-historyserver
 spec:
-  serviceName: spark-master-service
   replicas: 1
   selector:
     matchLabels:
-      part: spark-master
+      part: spark-historyserver
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
-        part: spark-master
+        part: spark-historyserver
     spec:
       containers:
         - args:
             - bash
             - -c
-            - /opt/spark/sbin/start-master.sh
+            - /opt/spark/sbin/start-history-server.sh
           env:
             - name: SPARK_DAEMON_MEMORY
-              value: 1g
-            - name: SPARK_MASTER_HOST
-              value: spark-master-0.spark-master-service
-            - name: SPARK_MASTER_PORT
-              value: "7077"
-            - name: SPARK_MASTER_WEBUI_PORT
-              value: "8080"
+              value: 1G
             - name: SPARK_NO_DAEMONIZE
               value: "true"
             - name: SPARK_SCALA_VERSION
               value: "2.13"
           image: mataelang/spark:3.3.1-scala2.13
-          name: spark-master
+          name: spark-historyserver
           ports:
-            - containerPort: 8080
-            - containerPort: 7077
+            - containerPort: 18080
           resources:
             limits:
               cpu: "1"

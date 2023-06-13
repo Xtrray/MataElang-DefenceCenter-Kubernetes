@@ -21,7 +21,7 @@ spec:
         - args:
             - bash
             - -c
-            - /opt/spark/sbin/start-history-server.sh
+            - /opt/spark/sbin/start-history-server.sh --properties-file /opt/spark/conf/spark-defaults.conf
           env:
             - name: SPARK_DAEMON_MEMORY
               value: 1G
@@ -29,8 +29,14 @@ spec:
               value: "true"
             - name: SPARK_SCALA_VERSION
               value: "2.13"
+            #- name: SPARK_HISTORY_OPTS_EVENTLOG_DIR
+            # value: "hdfs://hdfs-namenode-0.hdfs-namenode-service:9000/app/spark/spark-events"
+            #- name: SPARK_HISTORY_FS_LOGDIRECTORY
+            # value: "hdfs://hdfs-namenode-0.hdfs-namenode-service:9000/app/spark/spark-events"
           image: mataelang/spark:3.3.1-scala2.13
           name: spark-historyserver
+          securityContext:
+            runAsUser: 0
           ports:
             - containerPort: 18080
           resources:
@@ -38,20 +44,17 @@ spec:
               cpu: "1"
               memory: "1Gi"
             requests:
-              cpu: "1"
+              cpu: "100m"
               memory: "1Gi"
           volumeMounts:
             - name: spark-config
               mountPath: /opt/spark/conf/
-              subPath: conf
-            - name: spark-env
-              mountPath: /opt/spark/.env
-              subPath: .env
+              #readOnly: true
       restartPolicy: Always
       volumes:
         - name: spark-config
           configMap:
             name: spark-config
-        - name: spark-env
-          configMap:
-            name: spark-env
+            # items:
+            #  - key: spark-defaults.conf
+            #   path: spark-defaults.conf
