@@ -1,12 +1,14 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
+  name: spark-conf
   labels:
     app: spark
-  name: spark-config
 data:
+  workers: |-
+    spark-worker-service
   app.properties: |-
-    SPARK_MASTER=spark://spark-master-service:7077
+    SPARK_MASTER=spark://spark-master-service.default.svc.cluster.local:7077
     SPARK_CHECKPOINT_PATH=hdfs://hdfs-namenode-0.hdfs-namenode-service:9000/app/kafka-checkpoint
     TIMEZONE=Asia/Jakarta
     KAFKA_BOOTSTRAP_SERVERS=kafka-service:9093
@@ -46,15 +48,10 @@ data:
     spark.history.fs.cleaner.maxAge=3d
     spark.history.fs.eventLog.rolling.maxFilesToRetain=25
     # App Configuration
-    spark.master=spark://spark-master-service:7077
+    spark.master=spark://spark-master-service.default.svc.cluster.local:7077
     spark.eventLog.enabled=true
     spark.eventLog.rolling.enabled=true
     spark.eventLog.rolling.maxFileSize=128m
     spark.eventLog.compress=true
     # Hadoop
     spark.hadoop.dfs.replication=1
-  spark-env.sh: |-
-    HADOOP_USER_NAME=root
-    SPARK_EVENTLOG_DIR=hdfs://hdfs-namenode-0.hdfs-namenode-service:9000/app/spark/spark-events
-    SPARK_APP_JAR_PATH=hdfs://hdfs-namenode-0.hdfs-namenode-service:9000/app/kaspacore/files/kaspacore.jar
-    SPARK_HISTORY_OPTS="-Dspark.history.fs.logDirectory=hdfs://hdfs-namenode-0.hdfs-namenode-service:9000/app/spark/spark-events"

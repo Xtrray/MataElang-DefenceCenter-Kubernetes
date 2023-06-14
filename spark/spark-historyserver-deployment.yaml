@@ -3,58 +3,71 @@ kind: Deployment
 metadata:
   labels:
     app: spark
-    part: spark-historyserver
-  name: spark-historyserver
+    part: spark-history
+  name: spark-history
 spec:
   replicas: 1
   selector:
     matchLabels:
-      part: spark-historyserver
+      part: spark-history
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        part: spark-historyserver
+        part: spark-history
     spec:
       containers:
         - args:
             - bash
             - -c
-            - /opt/spark/sbin/start-history-server.sh --properties-file /opt/spark/conf/spark-defaults.conf
+            - /opt/spark/sbin/start-history-server.sh
           env:
+            - name: HADOOP_USER_NAME
+              valueFrom:
+                configMapKeyRef:
+                  key: HADOOP_USER_NAME
+                  name: spark-env
+            - name: SPARK_APP_JAR_PATH
+              valueFrom:
+                configMapKeyRef:
+                  key: SPARK_APP_JAR_PATH
+                  name: spark-env
             - name: SPARK_DAEMON_MEMORY
               value: 1G
+            - name: SPARK_EVENTLOG_DIR
+              valueFrom:
+                configMapKeyRef:
+                  key: SPARK_EVENTLOG_DIR
+                  name: spark-env
+            - name: SPARK_HISTORY_OPTS
+              valueFrom:
+                configMapKeyRef:
+                  key: SPARK_HISTORY_OPTS
+                  name: spark-env
             - name: SPARK_NO_DAEMONIZE
               value: "true"
             - name: SPARK_SCALA_VERSION
               value: "2.13"
-            #- name: SPARK_HISTORY_OPTS_EVENTLOG_DIR
-            # value: "hdfs://hdfs-namenode-0.hdfs-namenode-service:9000/app/spark/spark-events"
-            #- name: SPARK_HISTORY_FS_LOGDIRECTORY
-            # value: "hdfs://hdfs-namenode-0.hdfs-namenode-service:9000/app/spark/spark-events"
           image: mataelang/spark:3.3.1-scala2.13
           name: spark-historyserver
-          securityContext:
-            runAsUser: 0
           ports:
             - containerPort: 18080
           resources:
             limits:
-              cpu: "1"
-              memory: "1Gi"
+              cpu: "1000m"
+              memory: "1073741824"
             requests:
-              cpu: "100m"
-              memory: "1Gi"
+              cpu: "250m"
+              memory: "1073741824"
           volumeMounts:
-            - name: spark-config
+            - name: spark-conf
               mountPath: /opt/spark/conf/
-              #readOnly: true
+              readOnly: true
+          securityContext:
+            runAsUser: 0
       restartPolicy: Always
       volumes:
-        - name: spark-config
+        - name: spark-conf
           configMap:
-            name: spark-config
-            # items:
-            #  - key: spark-defaults.conf
-            #   path: spark-defaults.conf
+            name: spark-conf

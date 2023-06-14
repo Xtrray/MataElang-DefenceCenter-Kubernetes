@@ -10,34 +10,49 @@ spec:
     - args:
         - bash
         - -c
-        - "/opt/spark/bin/spark-submit --master $SPARK_MASTER_HOST --class $SPARK_APP_CLASSNAME --name $SPARK_APP_NAME
+        - "/opt/spark/bin/spark-submit
+          --class $SPARK_APP_CLASSNAME --name $SPARK_APP_NAME
           --total-executor-cores $TOTAL_EXECUTOR_CORES --conf spark.ui.port=$SPARK_APP_UI
           --conf spark.submit.deployMode=$DEPLOY_MODE --conf spark.driver.memory=$SPARK_DRIVER_MEMORY
           --conf spark.executor.cores=$SPARK_EXECUTOR_CORES --conf spark.executor.memory=$SPARK_EXECUTOR_MEMORY
-          --conf spark.standalone.submit.waitAppCompletion=true --conf spark.history.opts=$SPARK_HISTORY_OPTS
-          --conf spark.eventLog.dir=$SPARK_EVENTLOG_DIR
-          --files /opt/spark/conf/log4j2.properties,/opt/spark/conf/app.properties $SPARK_APP_JAR_PATH"
+          --conf spark.eventLog.dir=$SPARK_EVENTLOG_DIR --files local:///opt/spark/conf/app.properties $SPARK_APP_JAR_PATH"
       env:
-        - name: SPARK_DRIVER_EXTRAJAVAOPTIONS
-          value: "-Dlog4j.configuration=file:/opt/spark/conf/log4j2.properties -Dconfig.file=/opt/spark/conf/app.properties"
-        - name: SPARK_HISTORY_OPTS
-          value: "-Dspark.history.fs.logDirectory=hdfs://hdfs-namenode-0.hdfs-namenode-service:9000/app/spark/spark-events"
         - name: DEPLOY_MODE
           value: cluster
+        - name: HADOOP_USER_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: HADOOP_USER_NAME
+              name: spark-env
         - name: SPARK_APP_CLASSNAME
           value: org.mataelang.kaspacore.jobs.SensorEnrichDataStreamJob
+        - name: SPARK_APP_JAR_PATH
+          valueFrom:
+            configMapKeyRef:
+              key: SPARK_APP_JAR_PATH
+              name: spark-env
         - name: SPARK_APP_NAME
           value: SensorEnrichDataStreamJob
         - name: SPARK_APP_UI
           value: "4040"
         - name: SPARK_DRIVER_MEMORY
           value: 1g
+        - name: SPARK_EVENTLOG_DIR
+          valueFrom:
+            configMapKeyRef:
+              key: SPARK_EVENTLOG_DIR
+              name: spark-env
         - name: SPARK_EXECUTOR_CORES
           value: "1"
         - name: SPARK_EXECUTOR_MEMORY
           value: 1g
+        - name: SPARK_HISTORY_OPTS
+          valueFrom:
+            configMapKeyRef:
+              key: SPARK_HISTORY_OPTS
+              name: spark-env
         - name: SPARK_MASTER_HOST
-          value: spark://spark-master-0.spark-master-service.default.svc.cluster.local:7077
+          value: spark://spark-master-service.default.svc.cluster.local:7077
         - name: SPARK_MASTER_PORT
           value: "7077"
         - name: SPARK_NO_DAEMONIZE
@@ -46,25 +61,18 @@ spec:
           value: "2.13"
         - name: TOTAL_EXECUTOR_CORES
           value: "1"
-        - name: SPARK_EVENTLOG_DIR
-          value: hdfs://hdfs-namenode-0.hdfs-namenode-service:9000/app/spark/spark-events
-        - name: SPARK_APP_JAR_PATH
-          value: hdfs://hdfs-namenode-0.hdfs-namenode-service:9000/app/kaspacore/files/kaspacore.jar
       image: mataelang/spark:3.3.1-scala2.13
       name: spark-submit-enrich
+      resources: {}
+      volumeMounts:
+        - name: spark-conf
+          mountPath: /opt/spark/conf/
+          readOnly: true
       securityContext:
         runAsUser: 0
-      ports:
-        - containerPort: 7777
-        - containerPort: 4040
-      #resources: {}
-      volumeMounts:
-        - name: spark-config
-          mountPath: /opt/spark/conf/
-          subPath: conf
       workingDir: /opt/spark
   restartPolicy: Never
   volumes:
-    - name: spark-config
+    - name: spark-conf
       configMap:
-        name: spark-config
+        name: spark-conf

@@ -22,10 +22,30 @@ spec:
             - -c
             - /opt/spark/sbin/start-master.sh
           env:
+            - name: HADOOP_USER_NAME
+              valueFrom:
+                configMapKeyRef:
+                  key: HADOOP_USER_NAME
+                  name: spark-env
+            - name: SPARK_APP_JAR_PATH
+              valueFrom:
+                configMapKeyRef:
+                  key: SPARK_APP_JAR_PATH
+                  name: spark-env
             - name: SPARK_DAEMON_MEMORY
               value: 1g
+            - name: SPARK_EVENTLOG_DIR
+              valueFrom:
+                configMapKeyRef:
+                  key: SPARK_EVENTLOG_DIR
+                  name: spark-env
+            - name: SPARK_HISTORY_OPTS
+              valueFrom:
+                configMapKeyRef:
+                  key: SPARK_HISTORY_OPTS
+                  name: spark-env
             #- name: SPARK_MASTER_HOST
-            # value: spark-master-0.spark-master-service.default.svc.cluster.local:7077
+            # value: spark://spark-master-0.spark-master-service.default.svc.cluster.local:7077
             - name: SPARK_MASTER_PORT
               value: "7077"
             - name: SPARK_MASTER_WEBUI_PORT
@@ -36,27 +56,24 @@ spec:
               value: "2.13"
           image: mataelang/spark:3.3.1-scala2.13
           name: spark-master
-          securityContext:
-            runAsUser: 0
-            privileged: true
           ports:
             - containerPort: 8080
             - containerPort: 7077
-            - containerPort: 7777
-            - containerPort: 7778
           resources:
             limits:
-              cpu: "1"
-              memory: "1Gi"
+              cpu: "1000m"
+              memory: "1073741824"
             requests:
-              cpu: "300m"
-              memory: "1Gi"
+              cpu: "512m"
+              memory: "1073741824"
           volumeMounts:
-            - name: spark-config
+            - name: spark-conf
               mountPath: /opt/spark/conf/
-              subPath: conf
+              readOnly: true
+          securityContext:
+            runAsUser: 0
       restartPolicy: Always
       volumes:
-        - name: spark-config
+        - name: spark-conf
           configMap:
-            name: spark-config
+            name: spark-conf

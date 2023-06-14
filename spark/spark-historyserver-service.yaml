@@ -3,14 +3,14 @@ kind: Service
 metadata:
   labels:
     app: spark
-    part: spark-historyserver
-  name: spark-historyserver-service
+    part: spark-history
+  name: spark-history-service
 spec:
   ports:
     - name: "18080"
       port: 18080
       targetPort: 18080
   selector:
-    part: spark-historyserver
+    part: spark-history
 status:
   loadBalancer: {}

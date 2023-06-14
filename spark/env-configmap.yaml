@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: spark-env
+  labels:
+    app: spark
+data:
+  HADOOP_USER_NAME: root
+  SPARK_APP_JAR_PATH: hdfs://hdfs-namenode-0.hdfs-namenode-service:9000/app/kaspacore/files/kaspacore.jar
+  SPARK_EVENTLOG_DIR: hdfs://hdfs-namenode-0.hdfs-namenode-service:9000/app/spark/spark-events
+  SPARK_HISTORY_OPTS: -Dspark.history.fs.logDirectory=hdfs://hdfs-namenode-0.hdfs-namenode-service:9000/app/spark/spark-events
