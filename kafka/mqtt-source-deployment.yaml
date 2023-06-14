@@ -17,11 +17,11 @@ spec:
       containers:
         - env:
             - name: KAFKA_BOOSTRAP_SERVERS
-              value: 'kafka-service:9092'
+              value: "kafka-service:9092"
             - name: KAFKA_PRODUCE_TOPIC
               value: sensor_events
             - name: MQTT_HOST
-              value: 10.12.0.20
+              value: "mosquitto-service"
             - name: MQTT_PASSWORD
               value: mataelang
             - name: MQTT_PORT
