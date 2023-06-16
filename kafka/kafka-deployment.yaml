@@ -18,9 +18,9 @@ spec:
       containers:
         - image: confluentinc/cp-kafka:7.3.0
           command:
-           - sh
-           - -c
-           - "rm -rf /var/lib/kafka/data/lost+found \
+            - sh
+            - -c
+            - "rm -rf /var/lib/kafka/data/lost+found \
               && exec kafka-server-start /etc/kafka/server.properties \
               --override log.dirs=/var/lib/kafka/data --override advertised.listeners=INTERNAL://kafka-service:9092,EXTERNAL://kafka-service:9093 \
               --override zookeeper.connect=zookeeper-service:2181 --override listeners=INTERNAL://kafka-service:9092,EXTERNAL://kafka-service:9093 \

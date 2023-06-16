@@ -6,6 +6,8 @@ metadata:
     part: spark-submit
   name: spark-submit-enrich
 spec:
+  securityContext:
+    fsGroup: 0
   containers:
     - args:
         - bash
@@ -70,6 +72,7 @@ spec:
           readOnly: true
       securityContext:
         runAsUser: 0
+        runAsGroup: 0
       workingDir: /opt/spark
   restartPolicy: Never
   volumes:

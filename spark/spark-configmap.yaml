@@ -10,9 +10,9 @@ data:
   app.properties: |-
     SPARK_MASTER=spark://spark-master-service.default.svc.cluster.local:7077
     SPARK_CHECKPOINT_PATH=hdfs://hdfs-namenode-0.hdfs-namenode-service:9000/app/kafka-checkpoint
-    TIMEZONE=Asia/Jakarta
+    TIMEZONE=UTC
     KAFKA_BOOTSTRAP_SERVERS=kafka-service:9093
-    KAFKA_INPUT_STARTING_OFFSETS=latest
+    KAFKA_INPUT_STARTING_OFFSETS=earliest
     SENSOR_STREAM_INPUT_TOPIC=sensor_events
     SENSOR_STREAM_OUTPUT_TOPIC=sensor_events_with_geoip
     MAXMIND_DB_PATH=hdfs://hdfs-namenode-0.hdfs-namenode-service:9000/app/kaspacore/files/GeoLite2-City.mmdb

@@ -5,12 +5,9 @@ metadata:
   labels:
     app: mosquitto
 spec:
-  clusterIP: None
   ports:
     - name: "1883"
       port: 1883
       targetPort: 1883
   selector:
     app: mosquitto
-    #tier: frontend
-    #type: LoadBalancer

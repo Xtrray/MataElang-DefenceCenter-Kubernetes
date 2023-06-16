@@ -18,24 +18,18 @@ spec:
       containers:
         - name: hdfs-namenode
           image: quay.io/ferdyf78/hdfs-k8s:namenode-openjdk
-          #imagePullPolicy: Always
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9000
             - containerPort: 9870
-          env:
-            - name: ENSURE_NAMENODE_DIR
-              value: /app/name
           volumeMounts:
             - name: hdfs-conf
               mountPath: "/usr/local/hadoop/etc/hadoop"
               readOnly: true
-      #            - name: nn-pvc
-      #             mountPath: "/app/name"
       volumes:
         - name: hdfs-conf
           configMap:
             name: hdfs-conf
-#        - name: nn-pvc
-#         persistentVolumeClaim:
-#          claimName: nn-pvc
