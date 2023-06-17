@@ -32,7 +32,7 @@ spec:
               cpu: 500m
               memory: "536870912"
             requests:
-              cpu: 250m
+              cpu: 100m
               memory: "268435456"
           volumeMounts:
             - mountPath: /var/lib/zookeeper/data

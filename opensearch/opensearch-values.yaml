@@ -145,7 +145,7 @@ resources:
   limits:
     cpu: "1000m"
   requests:
-    cpu: "512m"
+    cpu: "200m"
     memory: "100Mi"
 
 initResources: {}
