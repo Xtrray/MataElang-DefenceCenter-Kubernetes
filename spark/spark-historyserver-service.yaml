@@ -12,5 +12,3 @@ spec:
       targetPort: 18080
   selector:
     part: spark-history
-status:
-  loadBalancer: {}

@@ -19,5 +19,3 @@ spec:
       targetPort: 4041
   selector:
     part: spark-worker
-status:
-  loadBalancer: {}

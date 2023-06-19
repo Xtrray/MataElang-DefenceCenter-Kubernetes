@@ -6,8 +6,6 @@ metadata:
     part: spark-submit
   name: spark-submit-aggr
 spec:
-  securityContext:
-    fsGroup: 0
   containers:
     - args:
         - bash

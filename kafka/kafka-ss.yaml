@@ -3,7 +3,7 @@ kind: StatefulSet
 metadata:
   labels:
     app: kafka
-  name: kafka-broker
+  name: kafka
 spec:
   serviceName: kafka-service
   replicas: 1

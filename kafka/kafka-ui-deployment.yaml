@@ -9,7 +9,6 @@ spec:
   selector:
     matchLabels:
       app: kafka-ui
-  strategy: {}
   template:
     metadata:
       labels:
@@ -24,7 +23,7 @@ spec:
             - name: KAFKA_CLUSTERS_0_ZOOKEEPER
               value: "zookeeper-service:2181"
           image: provectuslabs/kafka-ui
-          name: control-center
+          name: kafka-ui
           ports:
             - containerPort: 8080
           resources:

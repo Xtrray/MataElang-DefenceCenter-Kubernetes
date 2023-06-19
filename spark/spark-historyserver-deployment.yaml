@@ -6,8 +6,6 @@ metadata:
     part: spark-history
   name: spark-history
 spec:
-  #securityContext:
-  # fsGroup: 0
   replicas: 1
   selector:
     matchLabels:

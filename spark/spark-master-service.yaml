@@ -16,5 +16,3 @@ spec:
       targetPort: 7077
   selector:
     part: spark-master
-status:
-  loadBalancer: {}
